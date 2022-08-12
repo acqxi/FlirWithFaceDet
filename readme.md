@@ -88,4 +88,59 @@ gpicview output.jpg
 ```
 
 # Usage
-請參考檔案中的 PowerPoint 文件 (FLIR+Camera)toDetBodyTemp.pptx
+請參考檔案中的 PowerPoint 文件 FLIR.pdf
+### Run
+最後透過以下指令執行以編寫好的程式
+``` bash
+git clone https://github.com/acqxi/FlirWithFaceDet.git FLIR
+cd FLIR/thermal-pi/04-application/
+python3 thermometer.py
+```
+### arguments
+此程式有以下參數可以設定
+```yaml
+python3 thermometer.py -h
+
+usage: thermometer.py [-h] [--show SHOW] [--confidence CONFIDENCE]
+                      [--fontscale FONTSCALE] [--screenscale SCREENSCALE]
+                      [--fontthick FONTTHICK] [--adjust ADJUST]
+                      [--modeldeploy MODELDEPLOY] [--caffemodel CAFFEMODEL]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --show SHOW, -s SHOW  show real-time pic be taken from device
+  --confidence CONFIDENCE, -cf CONFIDENCE
+                        confidence df: .5
+  --fontscale FONTSCALE, -fs FONTSCALE
+                        font scale df: 1
+  --screenscale SCREENSCALE, -ss SCREENSCALE
+                        screen scale df: 1
+  --fontthick FONTTHICK, -ft FONTTHICK
+                        font thickness df: 2
+  --adjust ADJUST, -ad ADJUST
+                        adjust temp + ?
+  --modeldeploy MODELDEPLOY, -md MODELDEPLOY
+                        model's deploy text file df: deploy.prototxt.txt
+  --caffemodel CAFFEMODEL, -cm CAFFEMODEL
+                        caffe model file df: res10_300x300_ssd_iter_140000.caffemodel
+```
+- show
+    控制是否要輸出畫面，預設是輸出
+- confidence
+    控制信賴度，調整以決定模型需要多少信賴度才會將物體辨識為人臉，越低越容易將物體視為人臉，預設 0.5
+- fontscale
+    輸出的圖片中字體大小，預設 1
+- screenscale
+    輸出的圖片大小，預設 1
+- fontthick
+    輸出的圖片中字體粗細，預設 2
+- adjust
+    調整溫度偏移，填寫2將會把偵測到的數值增加兩度，請依場域使用，預設 1.5
+- modeldeploy
+    如果想使用別的 caffe 模型時，請將 deploy 文字檔路徑填在這
+- caffemodel
+    如果想使用別的 caffe 模型時，請將 .caffemodel 檔路徑填在這
+
+### TrobleShooting
+- Q : 熱像儀影像與RGB影像不批配
+    A : 請重新校正雙相機，PDF p.160
