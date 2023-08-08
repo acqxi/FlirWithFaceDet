@@ -78,7 +78,7 @@ def get_args():
     parser.add_argument( '--confidence','-cf', help="confidence df: .5", type=int, default=0.5 )
     parser.add_argument( '--fontscale', '-fs', help="font scale df: 1", type=int, default=1 )
     parser.add_argument( '--screenscale', '-ss', help="screen scale df: 1", type=int, default=1 )
-    parser.add_argument( '--fontthick','-ft', help="font thickness df: 2", type=int, default=3 )
+    parser.add_argument( '--fontthick','-ft', help="font thickness df: 2", type=int, default=2 )
     parser.add_argument( '--adjust', '-ad', help="adjust temp + ?", type=float, default=1.5 )
     parser.add_argument( '--modeldeploy', '-md', help="model's deploy text file df: deploy.prototxt.txt", type=path, default='deploy.prototxt.txt' )
     parser.add_argument( '--caffemodel', '-cm', help="caffe model file df: res10_300x300_ssd_iter_140000.caffemodel)", type=path, default='res10_300x300_ssd_iter_140000.caffemodel' )
@@ -111,6 +111,7 @@ def main():
     config = configparser.ConfigParser()
     config.read( '../fusion.conf' )
     visible_win_w = int( config.get( 'visible', 'win_w' ) )
+    visible_win_h = int( config.get( 'visible', 'win_h' ) )
     cstartX = int( config.get( 'stereo', 'startX' ) )
     cstartY = int( config.get( 'stereo', 'startY' ) )
     cendX = int( config.get( 'stereo', 'endX' ) )
@@ -129,17 +130,19 @@ def main():
             with HiddenPrints():
                 a, _ = leptonCap.capture()
                 raw_a = a.copy()
+                raw_a = ( raw_a - 27315 ) / 100 + args.adjust
             cv2.normalize( a, a, 0, 65535, cv2.NORM_MINMAX )
             np.right_shift( a, 8, a )
             _a = np.asarray( a, np.uint8 )
-            _a_rgb = cv2.applyColorMap( _a, cv2.COLORMAP_HOT )
+            _a_rgb = imutils.resize(cv2.applyColorMap( _a, cv2.COLORMAP_HOT ), visible_win_w)[:, ::-1].copy()
+            raw_a = raw_a[:, ::-1]
 
             img2 = cap.read()
             if img2.shape[ 1 ] != visible_win_w:
                 img2 = imutils.resize( img2, visible_win_w )
             crop_img2 = img2[ cstartY:cendY, cstartX:cendX ]
 
-            frame = crop_img2
+            frame = crop_img2[:, ::-1]
 
             # print( f"{img2.shape}, {crop_img2.shape}, {frame.shape}" )
 
@@ -178,10 +181,12 @@ def main():
                 ay = startY * ( 120 ) // abs( cstartY - cendY )
                 aey = endY * ( 120 ) // abs( cstartY - cendY )
                 try:
-                    temp_face = ( np.nanmax( raw_a[ ax:aex, ay:aey ] ) - 27315 ) / 100 + args.adjust
+                    face_heat = raw_a[ ay:aey, ax:aex ]
+                    temp_face = np.mean( face_heat[face_heat>0] ) # ( np.nanmax( raw_a[ ax:aex, ay:aey ] ) - 27315 ) / 100 + args.adjust
                 except Exception as e:
                     print( 'continue with error : ', e )
-                cv2.rectangle( _a_rgb, ( ax, ay ), ( aex, aey ), ( 0, 255, 0 ), 2 )
+                # cv2.rectangle( _a_rgb, ( ax, ay ), ( aex, aey ), ( 0, 255, 0 ), 2 )
+                cv2.rectangle( _a_rgb, ( ax*4, ay*4 ), ( aex*4, aey*4 ), ( 0, 255, 0 ), 2 )
                 cv2.rectangle( frame, ( startX, startY ), ( endX, endY ), ( 0, 0, 255 ), 2 )
                 # print( temp_face )
 
@@ -199,10 +204,18 @@ def main():
                     print( error )
                     pass  #
 
-            if showing:
-                img1 = cv2.resize( _a_rgb, ( 320, 240 ), interpolation=cv2.INTER_CUBIC )
+            mid1, mid0 = _a_rgb.shape[1]//2, _a_rgb.shape[0]//2
+            cv2.putText(
+                _a_rgb, f"{float(raw_a[raw_a.shape[0]//2, raw_a.shape[1]//2]):.1f}", ( mid1, mid0 ), cv2.FONT_HERSHEY_SIMPLEX, args.fontscale, ( 0, 0, 255 ),
+                args.fontthick )
+            cv2.rectangle( _a_rgb, ( mid1, mid0 ), ( mid1+1, mid0+1 ), ( 0, 0, 0 ), 8 )
+            cv2.rectangle( _a_rgb, ( mid1, mid0 ), ( mid1+1, mid0+1 ), ( 255, 255, 255 ), 4 )
 
-                crop_img2 = cv2.resize( frame, ( 320, 240 ) )
+            if showing:
+                RD = 1
+                img1 = cv2.resize( _a_rgb, ( 640//RD, 480//RD ), interpolation=cv2.INTER_CUBIC )
+
+                crop_img2 = cv2.resize( frame, ( 640//RD, 480//RD ) )
 
                 horizontal = np.hstack( ( img1, crop_img2 ) )
                 cv2.imshow( "dual_camera", horizontal )
