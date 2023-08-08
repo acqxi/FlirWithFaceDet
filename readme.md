@@ -86,11 +86,28 @@ cd ~/pylepton
 ./pylepton_capture output.jpg
 gpicview output.jpg
 ```
+### calibration
+先確定已經下載好這份git
+```bash
+git clone https://github.com/acqxi/FlirWithFaceDet.git FLIR
+```
+接著執行雙相機拍照程式
+```bash
+cd FLIR/thermal-pi/02-calibration
+python3 camera_preview.py
+```
+在確定相機與熱像儀畫面皆是清晰的輪廓時，在彈出的相機視窗中按下 'c' 來儲存照片，按下 'q' 退出。
+接著使用給你的隨機生成檔名(應該是一串數字如 `1630947343`)校正相機
+```bash
+python3 registration.py -i [FILE]
+```
+`[FILE]`是剛剛說到的檔名(無須副檔名)
+等到出現校正結果後，校正就完成了，他應該會自動儲存到父目錄的 `fusion.conf` 檔案中，如果沒有或是想要微調的話可從這裡調整。
 
 # Usage
 請參考檔案中的 PowerPoint 文件 FLIR.pdf
 ### Run
-最後透過以下指令執行以編寫好的程式
+最後透過以下指令執行以編寫好的程式 (須確定已經校正相機位置)
 ``` bash
 git clone https://github.com/acqxi/FlirWithFaceDet.git FLIR
 cd FLIR/thermal-pi/04-application/

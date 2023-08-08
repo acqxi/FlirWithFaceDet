@@ -7,13 +7,13 @@
 # Date   : 2020/07/24
 
 import numpy as np
-import cv2 
+import cv2
 import time
 import imutils
 import sys
 import threading
-from pylepton import Lepton
-import configparser 
+from pylepton.Lepton3 import Lepton3 as Lepton
+import configparser
 
 config = configparser.ConfigParser()
 config.read('../fusion.conf')
@@ -65,10 +65,9 @@ try:
 
             elif cv2.waitKey(1) & 0xFF == ord("q"):
                 break
-    
+
             time.sleep(0.01)
 
 finally:
     cap.release()
     cv2.destroyAllWindows()
-
