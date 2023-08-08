@@ -107,9 +107,12 @@ python3 registration.py -i [FILE]
 # Usage
 請參考檔案中的 PowerPoint 文件 FLIR.pdf
 ### Run
+先確定已經下載好這份git
+```bash
+git clone https://github.com/acqxi/FlirWithFaceDet.git FLIR
+```
 最後透過以下指令執行以編寫好的程式 (須確定已經校正相機位置)
 ``` bash
-git clone https://github.com/acqxi/FlirWithFaceDet.git FLIR
 cd FLIR/thermal-pi/04-application/
 python3 thermometer.py
 ```
