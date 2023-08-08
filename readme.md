@@ -2,7 +2,7 @@
 你需要先安裝以下套件才能開始使用本模型
 ### QT
 由於 QT4 已經被 QT5 替換不再提供下載，所以我們改裝 QT5
-由於我們使用的系統已經過時，因此更新需附加上參數 --allow-releaseinfo-change
+由於我們使用的系統已經過時，因此更新需附加上參數 `--allow-releaseinfo-change`
 ```bash
 sudo apt-get update --allow-releaseinfo-change 
 sudo apt install qtbase5-dev
@@ -105,7 +105,7 @@ python3 registration.py -i [FILE]
 等到出現校正結果後，校正就完成了，他應該會自動儲存到父目錄的 `fusion.conf` 檔案中，如果沒有或是想要微調的話可從這裡調整。
 
 # Usage
-請參考檔案中的 PowerPoint 文件 FLIR.pdf
+請參考檔案中的 PowerPoint 文件 `FLIR.pdf`
 ### Run
 先確定已經下載好這份git
 ```bash
@@ -145,28 +145,28 @@ optional arguments:
                         caffe model file df: res10_300x300_ssd_iter_140000.caffemodel
 ```
 - show
-    控制是否要輸出畫面，預設是輸出
+    控制是否要輸出畫面，預設是輸出(`True`)
 - confidence
-    控制信賴度，調整以決定模型需要多少信賴度才會將物體辨識為人臉，越低越容易將物體視為人臉，預設 0.5
+    控制信賴度，調整以決定模型需要多少信賴度才會將物體辨識為人臉，越低越容易將物體視為人臉，預設 `0.5`
 - fontscale
-    輸出的圖片中字體大小，預設 1
+    輸出的圖片中字體大小，預設 `1`
 - screenscale
-    輸出的圖片大小，預設 1
+    輸出的圖片大小，預設 `1`
 - fontthick
-    輸出的圖片中字體粗細，預設 2
+    輸出的圖片中字體粗細，預設 `2`
 - adjust
     調整溫度偏移，填寫2將會把偵測到的數值增加兩度，請依場域使用，預設 1.5
 - modeldeploy
-    如果想使用別的 caffe 模型時，請將 deploy 文字檔路徑填在這
+    如果想使用別的 caffe 模型時，請將deploy文字檔(`*.prototxt`)路徑填在這
 - caffemodel
-    如果想使用別的 caffe 模型時，請將 .caffemodel 檔路徑填在這
+    如果想使用別的 caffe 模型時，請將權重檔(`*.caffemodel`)路徑填在這
 
 ### TrobleShooting
 1. Q : 熱像儀影像與RGB影像不批配。
     - A : 請重新校正雙相機，PDF p.160。
 2. Q : 判讀溫度與實際溫度不符。
     - A1 : 請盡量移除錄攝環境中不相關的熱源。
-    - A2 : 有時熱像儀會受當時氣溫或光線而產生讀取值偏移，可以透過參數 --adjust 進行校正微調。
+    - A2 : 有時熱像儀會受當時氣溫或光線而產生讀取值偏移，可以透過參數 `--adjust` 進行校正微調。
     - A3 : 有時候目標經太陽久曬或因其他原因可能在臉部造成不正常熱源而導致溫度讀數偏差，建議此時可以透過人工良量測額溫、耳溫來複查。
 3. Q : 無法偵測到目標人臉。
     - A : 請確認環境光照良好，且目標臉部遮擋盡量減少後重試。
